@@ -1,0 +1,194 @@
+#include <stdio.h>
+
+#ifndef POLA
+# define POLA 5
+#endif // POLA
+
+#ifndef WIERSZE
+# define WIERSZE 26
+#endif // WIERSZE
+
+#ifndef KOLUMNY
+# define KOLUMNY 26
+#endif // KOLUMNY
+
+#ifndef WYBOR
+# define WYBOR 1000
+#endif // WYBOR
+
+#define DANE_DL 2
+#define MAX_POLE 676
+
+int pole[WIERSZE][KOLUMNY];
+int wsp[DANE_DL]; //wsp to wspolrzedne
+int ocena;
+
+void czyszczenie() {
+    int i = 0, j = 0;
+    while (i < WIERSZE && j < KOLUMNY) {
+        while (i < WIERSZE && j < KOLUMNY) {
+            pole[i][j] = '!';
+            j++;
+        }
+        i++;
+        j = 0;
+    }
+}
+
+void wczytywanie(int znak) {
+    int i = 0, j = 0;
+    int a, b;
+    while ((znak = getchar()) != '\n') {
+            wsp[i] = znak;
+            i++;
+    }
+    if (wsp[0] != '-' && wsp[0] != '.') {
+        a = wsp[0] - 'A';
+        b = wsp[1] - 'a';
+        j = b + POLA;
+        while (b < j) {
+            pole[b][a] = '#';
+            b++;
+        }
+    }
+}
+
+void ocenianie() {
+    int a = 0, b = 0;
+    int licznik = 0;
+    int ocena_P = 0, ocena_L = 0;
+    while (a < WIERSZE && b < KOLUMNY) {
+        while (a < WIERSZE && b < KOLUMNY) {
+            if (pole[a][b] == '!') {
+                licznik++;
+                b++;
+            }
+            else if (pole[a][b] != '!') {
+                ocena_P += licznik / POLA;
+                b++;
+                licznik = 0;
+            }
+        }
+        ocena_P += licznik / POLA;
+        licznik = 0;
+        b = 0;
+        a++;
+    }
+    a = 0, b = 0, licznik = 0;
+    while (a < WIERSZE && b < KOLUMNY) {
+        while (a < WIERSZE && b < KOLUMNY) {
+            if (pole[a][b] == '!') {
+                licznik++;
+                a++;
+            }
+            else if (pole[a][b] != '!') {
+                ocena_L += licznik / POLA;
+                licznik = 0;
+                a++;
+            }
+        }
+        ocena_L += licznik / POLA;
+        licznik = 0;
+        b++;
+        a = 0;
+    }
+    ocena = ocena_P - ocena_L;
+}
+
+void ruch_P() {
+    int a, b, j;
+    if (wsp[0] != '.') {
+        a = wsp[0]; //wiersz
+        b = wsp[1]; //kolumna
+        j = b + POLA;
+        while (b < j) {
+            pole[a][b] = '#';
+            b++;
+        }
+    }
+}
+
+void czyszczenie_P() {
+    int a, b, j;
+    if (wsp[0] != '.') {
+        a = wsp[0];
+        b = wsp[1];
+
+        j = b + POLA;
+        while (b < j) {
+            pole[a][b] = '!';
+            b++;
+        }
+    }
+}
+
+void wybor_ruch() {
+    int ocena_maks = 0 - (WIERSZE / POLA) * KOLUMNY;
+    int pole_ruch[2][MAX_POLE];
+    int a = 0, b = 0;
+    int licznik = 0, p = 0;
+    int wybor;
+    while (a < WIERSZE && b <= KOLUMNY - POLA) {
+        while (a < WIERSZE && b <= KOLUMNY - POLA) {
+            int i = b, j = b + POLA;
+            while (i < j) {
+                if (pole[a][i] == '!')
+                    i++;
+                else
+                    i = j+1;
+            }
+            if (i == j) {
+                wsp[0] = a, wsp[1] = b;
+                ruch_P ();
+
+                ocenianie ();
+
+                if (ocena > ocena_maks) {
+                    licznik = 0;
+                    p = 0;
+                    ocena_maks = ocena;
+                    pole_ruch[0][p] = a;
+                    pole_ruch[1][p] = b;
+                    p++;
+                    licznik++;
+                }
+                else if (ocena == ocena_maks) {
+                        pole_ruch[0][p] = a;
+                        pole_ruch[1][p] = b;
+                        p++;
+                        licznik++;
+                }
+                czyszczenie_P ();
+            }
+            b++;
+        }
+        a++;
+        b = 0;
+    }
+    if (licznik == 0) {
+        wsp[0] = '.';
+    }
+    else {
+        wybor = WYBOR % licznik;
+        wsp[0] = pole_ruch[0][wybor];
+        wsp[1] = pole_ruch[1][wybor];
+        ruch_P ();
+        printf ("%c%c\n",'a' + wsp[0], 'A' + wsp[1]);
+    }
+}
+
+int main(void) {
+    int wspolrzedne = ' ';
+    czyszczenie();
+    wczytywanie (wspolrzedne);
+    while (wsp[0] != '.') {
+        ocenianie();
+        wybor_ruch ();
+        if (wsp[0] == '.') {
+            printf (".\n");
+            return 0;
+        }
+        wczytywanie (wspolrzedne);
+    }
+    return 0;
+}
