@@ -74,30 +74,24 @@ void naf2napier(int *x, int xn, int **tab, int *a) {
     int *n_naf = NULL;
     int rozmiar = 0;
     int b = 0;
+    
+    for (int i = 0; i < xn; i++) {
+        if (x[i] != 0) rozmiar++;
+    }
+    n_naf = malloc((size_t) rozmiar * sizeof *n_naf);
     for(int i = 0; i < xn; i++) {
     int c = x[i];
         if(c == 1) {
-            if (b == rozmiar) {
-                rozmiar = wiecej(rozmiar);
-                n_naf = realloc(n_naf, (size_t) rozmiar * sizeof *n_naf + 5);
-                //assert(n_naf != NULL;
-            }
             n_naf[b] = i;
             b++;
         }
         else if(c == -1) {
-            if (b == rozmiar) {
-                rozmiar = wiecej(rozmiar);
-                n_naf = realloc(n_naf, (size_t) rozmiar * sizeof *n_naf + 5);
-              //  assert(n_naf != NULL);
-            }
             n_naf[b] = - i - 1;
             b++;
         }
     }
- //   assert(c < n);
     *tab = n_naf;
-    *a = b;
+    *a = rozmiar;
 }
 
 void bi2naf(int *x, int xn, int **tab, int *a) { // ok
