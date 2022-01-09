@@ -98,7 +98,7 @@ void bi2naf(int *x, int xn, int **tab, int *a) { // ok
     /* w x jest zapisana liczba w systemie binarnym zawierajace cyfry (-1, 0, 1),
     xn to dlugosc tablicy x, liczba x w systemie BBR-NAF zapisana jest w tab, a to dlugosc tabn */
     int *n_naf;
-    int pamiec = xn + 2;
+    int pamiec = xn + 1;
     /* dlugosc liczby w system BBR-NAF
     jest najwyzej o 1 dluzszy od dl. w systemie binarnym
     np. 11...1 (n jedynek) = 1000...0-1 (n-1 zer) */
@@ -133,13 +133,16 @@ void bi2naf(int *x, int xn, int **tab, int *a) { // ok
         }
 
     }
-
-    *tab = n_naf;
+    
     int j = xn;
     while(n_naf[j] == 0) {
         j--;
     }
-    *a = j + 1;
+    j++;
+    n_naf = realloc(n_naf, (size_t) j * sizeof(int));
+    *tab = n_naf;
+    
+    *a = j;
 }
 
 void napier2naf(int *a, int n, int **tab, int *tabn) {
@@ -482,7 +485,7 @@ void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b
     pomn = potega_wynikn;
     *c = pom;
     *cn = pomn;
-    
+    free(naf_b);
     free(naf_pom);
     free(potega_pom);
 }
