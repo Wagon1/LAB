@@ -140,7 +140,6 @@ void bi2naf(int *x, int xn, int **tab, int *a) { // ok
         j--;
     }
     *a = j + 1;
-    n_naf = NULL;
 }
 
 void napier2naf(int *a, int n, int **tab, int *tabn) {
@@ -304,7 +303,10 @@ int ntoi(int *a, int n) {
     else {
         napier2naf(a, n, &bi, &dlugosc_bi);
         for (int i = dlugosc_bi - 1; i >= 0; i--) {
-            if(wynik > INT_MAX / 2 - bi[i] / 2) wynik = 0;
+            if (wynik == INT_MAX / 2 - bi[i] / 2) wynik = INT_MAX;
+            else if (wynik == INT_MIN / 2 - bi[i] / 2) wynik = INT_MIN;
+            else if (wynik < INT_MIN / 2 - bi[i] / 2) wynik = 0;
+            else if (wynik > INT_MAX / 2 - bi[i] / 2) wynik = 0; 
             else wynik = wynik * 2 + bi[i];
         }
     }
@@ -456,22 +458,31 @@ void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b
     int potega_pomn;
     int *potega_wynik;
     int potega_wynikn;
+    int *pom;
+    int pomn;
     napier2naf(b, bn, &naf_b, &naf_bn); //wykladnik przerzut na bi
     potega_wynik = a;
     potega_wynikn = an;
     while(naf_bn > 1 || naf_b[0] != 1) {
         nmul(potega_wynik, potega_wynikn, a, an, &potega_pom, &potega_pomn);
+        if(potega_wynik != a) {
+        	free(potega_wynik);
+        }
         potega_wynik = potega_pom;
         potega_wynikn = potega_pomn;
         potega_pom = NULL;
+        
         bi_sub_1(naf_b, naf_bn, &naf_pom, &naf_pomn);
+        free(naf_b);
         naf_b = naf_pom;
         naf_bn = naf_pomn;
         naf_pom = NULL;
     }
-    *c = potega_wynik;
-    *cn = potega_wynikn;
-    free(naf_b);
+    pom = potega_wynik;
+    pomn = potega_wynikn;
+    *c = pom;
+    *cn = pomn;
+    
     free(naf_pom);
     free(potega_pom);
 }
@@ -613,3 +624,157 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     free(reszta_bbr);
     free(iloraz_bbr); 
 }
+
+//int main(void) {
+
+ /*   int a[2] = {0,-3};
+    int b[2] = {-1,2};
+    int *tab11;
+    int tabn11;
+    nexp(a,2,b,2,&tab11,&tabn11);
+    for (int i = tabn11 - 1; i >= 0; i--) {
+        printf("%d ", tab11[i]);
+    }*/
+
+  /*  int a[3] = {1,0,-1}; chyba ook
+    int *tab10;
+    int tabn10;
+    bi_sub_1(a,3,&tab10,&tabn10);
+        for (int i = tabn10 - 1; i >= 0; i--) {
+            printf("%d ", tab10[i]);
+        }
+        printf("koniec\n");
+    free(tab10);*/
+
+
+ /*   int a[1] = {1};
+    int an = 1;
+    int *tab10;
+    int tabn10;
+    printf("CCC\n");
+    while (an != 1 || a[0] != 0) {
+            printf("AA\n");
+
+            for (int i = an - 1; i >= 0; i--) {
+            printf("%d ", a[i]);
+        }
+        printf("przed --1\n");
+
+        bi_sub_1(a,1,&tab10,&tabn10);
+    printf("BB\n");
+        *a = *tab10;
+        an = tabn10;
+      //  free(tab10);
+        for (int i = an - 1; i >= 0; i--) {
+            printf("%d ", a[i]);
+        }
+        printf("koniec --1\n");
+    }*/
+
+  /*  int a[2] = {0,-3};
+    int b[1] = {1};
+    int *tab1;
+    int tabn1;
+    nmul(a,2,b,1,&tab1,&tabn1);
+    for (int i = tabn1 - 1; i >= 0; i--) {
+        printf("%d ", tab1[i]);
+    }
+    free(tab1);*/
+
+ /*   int a[2] = {0,3};
+    int b[2] = {-1, 3};
+    int *tab2;
+    int tabn2;
+    nsub(a,2,b,2,&tab2,&tabn2);
+    for (int i = tabn2 - 1; i >= 0; i--) {
+        printf("%d ", tab2[i]);
+    }*/
+
+ /*   int a[4] = {1,0,0,1};  ook
+    int *tab3;
+    int tabn3;
+    naf2napier(a,4,&tab3,&tabn3);
+    for (int i = tabn3 - 1; i >= 0; i--) {
+        printf("%d ", tab3[i]);
+    }
+    free(tab3);
+    tab3 = NULL;*/
+
+ /*   int a[1] = {0};
+    int b[2] = {-1, 3};
+    int *tab4;
+    int tabn4;
+    nadd(a,1,b,2,&tab4,&tabn4);
+    for (int i = tabn4 - 1; i >= 0; i--) {
+        printf("%d ", tab4[i]);
+    }*/
+
+  //  int a[2] = {1,3};   ook
+  /*  int *a = NULL;
+    int *tab5;
+    int tabn5;
+    napier2naf(a,0,&tab5,&tabn5);
+    for (int i = tabn5 - 1; i >= 0; i--) {
+        printf("%d ", tab5[i]);
+    }
+    free(tab5);*/
+
+  /*  int a[4] = {0,1,0,1};  ook
+    int *tab6;
+    int tabn6;
+    bi2naf(a,4,&tab6,&tabn6);
+    for (int i = tabn6 - 1; i >= 0; i--) {
+        printf("%d ", tab6[i]);
+    }
+    free(tab6);*/
+
+ /*   int licz = 10;
+    int *tab7;
+    int tabn7;
+    iton(licz, &tab7, &tabn7);
+    printf("dlugosc = %d\n", tabn7);
+    printf("i wylicznona = %d\n",ntoi(tab7, tabn7));
+    for(int i = 0; i < tabn7; i++) {
+        printf("%d ", tab7[i]);
+    }
+    free(tab7);*/
+
+
+ /*   int wynik = 0;   ook
+    int tab8[2] = {1, 3};
+    int n = 2;
+    wynik = (ntoi(tab8, n));
+    printf("wynik to = %d", wynik); */
+
+
+ /*   int *tab9;   ook
+    int a;
+    int x;
+    scanf("%d", &x);
+    dec2naf(x, &tab9, &a);
+    for (int i = a - 1; i >= 0; i--) {
+        printf("%d", tab9[i]);
+    }
+    printf("\n");
+    free(tab9);*/
+
+/*    int a[2] = {-1,3};
+    int b[1] = {2};
+    int *tab2;
+    int tabn2;
+    int *reszta;
+    int resztan;
+    ndivmod(a,2,b,1,&tab2,&tabn2, &reszta, &resztan);
+    for (int i = tabn2 - 1; i >= 0; i--) {
+        printf("%d ", tab2[i]);
+    }
+    printf("\n");
+    for (int i = resztan - 1; i >= 0; i--) {
+        printf("%d ", reszta[i]);
+    }
+    free(tab2);
+    free(reszta);
+
+
+    return 0;
+}*/
