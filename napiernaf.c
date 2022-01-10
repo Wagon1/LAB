@@ -74,7 +74,7 @@ void naf2napier(int *x, int xn, int **tab, int *a) {
     int *n_naf = NULL;
     int rozmiar = 0;
     int b = 0;
-    
+
     for (int i = 0; i < xn; i++) {
         if (x[i] != 0) rozmiar++;
     }
@@ -133,7 +133,7 @@ void bi2naf(int *x, int xn, int **tab, int *a) { // ok
         }
 
     }
-    
+
     int j = xn;
     while(n_naf[j] == 0) {
         j--;
@@ -141,7 +141,7 @@ void bi2naf(int *x, int xn, int **tab, int *a) { // ok
     j++;
     n_naf = realloc(n_naf, (size_t) j * sizeof(int));
     *tab = n_naf;
-    
+
     *a = j;
 }
 
@@ -150,7 +150,7 @@ void napier2naf(int *a, int n, int **tab, int *tabn) {
     int dlugosc_bi;
     int pozycja;
     /* jesli jest to liczba 0  */
-    if (a == NULL && n == 0) { 
+    if (a == NULL && n == 0) {
         bi = malloc(sizeof(int));
         bi[0] = 0;
         dlugosc_bi = 1;
@@ -159,12 +159,12 @@ void napier2naf(int *a, int n, int **tab, int *tabn) {
         if (a[n-1] >=0 ) dlugosc_bi = a[n-1] + 1;
         else dlugosc_bi = -a[n-1]; // wtedy a[n-1] < 0, oraz liczba jest ujemna
         bi = malloc((size_t) dlugosc_bi * sizeof (int));
-        
+
         /* zeruje tablice bi */
         for (int i = 0; i < dlugosc_bi; i++) {
             bi[i] = 0;
         }
-        
+
         for (int i = 0; i < n; i++) {
             if (a[i] >= 0) {
                 pozycja = a[i];
@@ -257,7 +257,7 @@ void bi_add_1(int *a, int an, int **c, int *cn) { //a jest w bi
     int suma_bbrn;
  //   napier2naf(a, an, &a, &an);
     suman = an + 1;
-    suma = malloc((size_t) suman * sizeof *suma ); 
+    suma = malloc((size_t) suman * sizeof *suma );
     for(int i = 0; i < suman; i++) {
         suma[i] = 0;
     }
@@ -299,7 +299,7 @@ void iton(int x, int **a, int *n) {
     }
     else {
         dec2naf(x, &bbr, &dlugosc_BBR);
-        /* w x jest bbr*/  
+        /* w x jest bbr*/
         naf2napier(bbr, dlugosc_BBR, &n_naf, &b);
         free(bbr);
     }
@@ -308,7 +308,7 @@ void iton(int x, int **a, int *n) {
     *n = b;
     /* w dec2naf() x w kazdym obrocie petli zmniejsza sie o polowe
     zlozonosc iton() bedzie nlog(n) */
-    
+
     bbr = NULL;
 }
 
@@ -316,21 +316,30 @@ int ntoi(int *a, int n) {
     int *bi;
     int dlugosc_bi;
     int wynik = 0;
+    /* wydzielam osobny warunek kiedy a == NULL */
     if (n == 0) {
             wynik = 0;
     }
     else {
         napier2naf(a, n, &bi, &dlugosc_bi);
+        /* tutaj a przedstawia wartosc INT_MAX */
         if (dlugosc_bi == 2 && bi[0] == -1 && bi[1] == 31) {
             wynik = INT_MAX;
         }
+        /* tutaj a przedstawia wartosc INT_MIN */
         else if (dlugosc_bi == 1 && bi[0] == -32) {
             wynik = INT_MIN;
         }
         else {
             for (int i = dlugosc_bi - 1; i >= 0; i--) {
-                if (wynik < INT_MIN / 2 - bi[i] / 2) return 0;
-                else if (wynik > INT_MAX / 2 - bi[i] / 2) return 0; 
+                if (wynik < INT_MIN / 2 - bi[i] / 2) {
+                    free(bi);
+                    return 0;
+                }
+                else if (wynik > INT_MAX / 2 - bi[i] / 2) {
+                    free(bi);
+                    return 0;
+                }
                 else wynik = wynik * 2 + bi[i];
             }
         }
@@ -354,7 +363,7 @@ void nadd(int *a, int an, int *b, int bn, int **c, int *cn) {
     napier2naf(b, bn, &naf_b, &naf_bn);
     if (naf_an > naf_bn) suman = naf_an + 1;
     else suman = naf_bn + 1;
-    suma = malloc((size_t) suman * sizeof (int)); 
+    suma = malloc((size_t) suman * sizeof (int));
     for(int i = 0; i < suman; i++) {
         suma[i] = 0;
     }
@@ -418,67 +427,56 @@ void nsub(int *a, int an, int *b, int bn, int **c, int *cn) {
 }
 
 void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
-    int *iloczyn;
-    int iloczynn;
-    int *naf_a;
-    int naf_an;
     int *naf_b;
     int naf_bn;
-    int *iloczyn_bbr;
-    int iloczyn_bbrn;
-    int *iloczyn_napier;
-    int iloczyn_napiern;
-    if ( !a || !b) {
-        iloczyn_napier = NULL;
-        iloczyn_napiern = 0;
+    int *naf_pom;
+    int naf_pomn;
+    int *iloczyn_pom;
+    int iloczyn_pomn;
+    int *iloczyn_wynik;
+    int iloczyn_wynikn;
+    int *pom;
+    int pomn;
+    int ujemna = 0;
+    napier2naf(b, bn, &naf_b, &naf_bn); //drugi skladnik przerzucam na bi
+    /* jesli liczba b jest ujemna, to zamieniam na dodatnia i zapisuje do int ujemna -1 */
+    if (naf_b[naf_bn - 1] < -1) {
+        ujemna = -1;
+        for (int i = 0; i < naf_bn; i++) {
+            naf_b[i] = -1 * naf_b[i];
+        }
     }
-    else {
-	    napier2naf(a, an, &naf_a, &naf_an);
-	    napier2naf(b, bn, &naf_b, &naf_bn);
-	    iloczynn = naf_an + naf_bn;
-	    iloczyn = malloc((size_t) iloczynn * sizeof *iloczyn);
-	    /* zeruje tablice iloczyn */
-	    for(int i = 0; i < iloczynn; i++) {
-		iloczyn[i] = 0;
-	    }
-	    if(naf_an > naf_bn) {
-		for(int i = 0; i < naf_bn; i++) {
-		        int pamiec = naf_b[i];
-		        int l = i;
-		    for(int j = 0; j < naf_an; j++) {
-		        iloczyn[l] += pamiec * naf_a[j];
-		        przeniesienie_bi_petla(iloczyn, l);
-		        l++;
-		    }
-		}
-	    }
-	    else {
-		for(int i = 0; i < naf_an; i++) {
-		        int pamiec = naf_a[i];
-		        int l = i;
-		    for(int j = 0; j < naf_bn; j++) {
-		        iloczyn[l] += pamiec * naf_b[j];
-		        przeniesienie_bi_petla(iloczyn, l);
-		        l++;
-		    }
-		}
-	    }
-	    int i = iloczynn - 1;
-	    while(iloczyn[i] == 0) {
-		i--;
-	    }
-	    int dlugosc = i + 1;
-	    bi2naf (iloczyn, dlugosc, &iloczyn_bbr, &iloczyn_bbrn);
-	    naf2napier (iloczyn_bbr, iloczyn_bbrn, &iloczyn_napier, &iloczyn_napiern);
-	    free(naf_a);
-	    free(naf_b);
-	    free(iloczyn);
-	    free(iloczyn_bbr);
+    iloczyn_wynik = a;
+    iloczyn_wynikn = an;
+    /* dopoki naf_b jest wieksze niz 1, dodaje wartosc an do siebie */
+    while(naf_bn > 1 || naf_b[0] != 1) {
+        nadd(iloczyn_wynik, iloczyn_wynikn, a, an, &iloczyn_pom, &iloczyn_pomn);
+        if(iloczyn_wynik != a) {
+        	free(iloczyn_wynik);
+        }
+        iloczyn_wynik = iloczyn_pom;
+        iloczyn_wynikn = iloczyn_pomn;
+        iloczyn_pom = NULL;
+        /* w kazdym obrocie petli zmniejszam wartosc b o 1 */
+        bi_sub_1(naf_b, naf_bn, &naf_pom, &naf_pomn);
+        free(naf_b);
+        naf_b = naf_pom;
+        naf_bn = naf_pomn;
+        naf_pom = NULL;
     }
-    *c = iloczyn_napier;
-    *cn = iloczyn_napiern;
-    
-    
+    /* jesli wartsc b byla ujemna, to koncowy wynik trzeba pommnozyc przez -1*/
+    if (ujemna == -1) {
+        for (int i = 0; i < iloczyn_wynikn; i++) {
+            iloczyn_wynik[i] = -1 * iloczyn_wynik[i] - 1;
+        }
+    }
+    pom = iloczyn_wynik;
+    pomn = iloczyn_wynikn;
+    *c = pom;
+    *cn = pomn;
+    free(naf_b);
+    free(naf_pom);
+    free(iloczyn_pom);
 }
 
 void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b to wykladnik
@@ -503,7 +501,7 @@ void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b
         potega_wynik = potega_pom;
         potega_wynikn = potega_pomn;
         potega_pom = NULL;
-        
+
         bi_sub_1(naf_b, naf_bn, &naf_pom, &naf_pomn);
         free(naf_b);
         naf_b = naf_pom;
@@ -540,8 +538,8 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     int ilorazn_napier;
     int rodzaj = 0;
 
-    napier2naf(a, an, &naf_a, &naf_an); 
-    napier2naf(b, bn, &naf_b, &naf_bn); 
+    napier2naf(a, an, &naf_a, &naf_an);
+    napier2naf(b, bn, &naf_b, &naf_bn);
 
     iloraz = malloc(sizeof(int));
     ilorazn = 1;
@@ -647,14 +645,14 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     *qn = ilorazn_napier;
     *r = reszta_napier;
     *rn = resztan_napier;
-    
+
     free(iloraz);
     free(reszta);
     free(naf_a);
     free(naf_b);
     free(iloraz_pom);
     free(reszta_bbr);
-    free(iloraz_bbr); 
+    free(iloraz_bbr);
 }
 
 //int main(void) {
@@ -686,12 +684,10 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     printf("CCC\n");
     while (an != 1 || a[0] != 0) {
             printf("AA\n");
-
             for (int i = an - 1; i >= 0; i--) {
             printf("%d ", a[i]);
         }
         printf("przed --1\n");
-
         bi_sub_1(a,1,&tab10,&tabn10);
     printf("BB\n");
         *a = *tab10;
@@ -733,11 +729,11 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     free(tab3);
     tab3 = NULL;*/
 
- /*   int a[1] = {0};
-    int b[2] = {-1, 3};
+   /* int a[2] = {-1,2};
+    int b[2] = {-2, 3};
     int *tab4;
     int tabn4;
-    nadd(a,1,b,2,&tab4,&tabn4);
+    nadd(a,2,b,2,&tab4,&tabn4);
     for (int i = tabn4 - 1; i >= 0; i--) {
         printf("%d ", tab4[i]);
     }
@@ -810,5 +806,5 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     free(reszta);*/
 
 
- //   return 0;
+//    return 0;
 //}
