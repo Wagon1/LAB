@@ -278,6 +278,63 @@ void bi_add_1(int *a, int an, int **c, int *cn) { //a jest w bi
     suma = NULL;
 }
 
+int compare(int *a, int an, int *b, int bn) { //1 when a >= b else -1
+    int *naf_a = NULL;
+    int naf_an;
+    int *naf_b = NULL;
+    int naf_bn;
+    napier2naf(a, an, &naf_a, &naf_an);
+    napier2naf(b, bn, &naf_b, &naf_bn);
+
+    if (naf_an > naf_bn) {
+        if (naf_a[naf_an - 1] > 0) {
+            free(naf_a);
+            free(naf_b);
+            return 1;
+        }
+        else {
+            free(naf_a);
+            free(naf_b);
+            return -1;
+        }
+    }
+    else if (naf_bn > naf_an) {
+        if (naf_b[naf_bn - 1] > 0) {
+            free(naf_a);
+            free(naf_b);
+            return -1;
+        }
+        else {
+            free(naf_a);
+            free(naf_b);
+            return 1;
+        }
+    }
+    else if (naf_an == naf_bn) {
+        int i = naf_an - 1;
+        while (i >= 0 && naf_a[i] == naf_b[i]) {
+            i--;
+        }
+        if (i == -1) {
+            free(naf_a);
+            free(naf_b);
+            return 1;
+        }
+        else {
+            if (naf_a[i] > naf_b[i]) {
+                free(naf_a);
+                free(naf_b);
+                return 1;
+            }
+            else {
+                free(naf_a);
+                free(naf_b);
+                return -1;
+            }
+        }
+    }
+}
+
 void iton(int x, int **a, int *n) {
     /* w bbr bedzie zapisana liczba w postaci BBR-NAF*/
     int *bbr;
@@ -438,13 +495,9 @@ void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
     int *pom;
     int pomn;
     int ujemna = 0;
-    int dlugosc_bi_a = a[an - 1];
-    int dlugosc_bi_b = b[bn - 1];
     /* sprawdzam, wartosc ktorej liczby jest wieksza i ustawiam te mniejsza liczbe jako drugi czynnik */
     /* b to bedzie drugi czynnik, jesli wartosc a > b, to zamieniam a z b */
-    if (dlugosc_bi_a < 0) dlugosc_bi_a = -1 * dlugosc_bi_a - 1;
-    if (dlugosc_bi_b < 0) dlugosc_bi_b = -1 * dlugosc_bi_b - 1;
-    if (dlugosc_bi_b > dlugosc_bi_a) {
+    if ((compare(b, bn, a, an)) == 1) {
         pom = a;
         pomn = an;
         a = b;
@@ -493,6 +546,7 @@ void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
     free(naf_pom);
     free(iloczyn_pom);
 }
+
 
 void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b to wykladnik
     int *naf_b;
