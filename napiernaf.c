@@ -438,7 +438,22 @@ void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
     int *pom;
     int pomn;
     int ujemna = 0;
-    napier2naf(b, bn, &naf_b, &naf_bn); //drugi skladnik przerzucam na bi
+    int dlugosc_bi_a = a[an - 1];
+    int dlugosc_bi_b = b[bn - 1];
+    /* sprawdzam, wartosc ktorej liczby jest wieksza i ustawiam te mniejsza liczbe jako drugi czynnik */
+    /* b to bedzie drugi czynnik, jesli wartosc a > b, to zamieniam a z b */
+    if (dlugosc_bi_a < 0) dlugosc_bi_a = -1 * dlugosc_bi_a - 1;
+    if (dlugosc_bi_b < 0) dlugosc_bi_b = -1 * dlugosc_bi_b - 1;
+    if (dlugosc_bi_b > dlugosc_bi_a) {
+        pom = a;
+        pomn = an;
+        a = b;
+        an = bn;
+        b = pom;
+        bn = pomn;
+        free(pom);
+    }
+    napier2naf(b, bn, &naf_b, &naf_bn); //drugi czynnik przerzucam na bi
     /* jesli liczba b jest ujemna, to zamieniam na dodatnia i zapisuje do int ujemna -1 */
     if (naf_b[naf_bn - 1] < -1) {
         ujemna = -1;
