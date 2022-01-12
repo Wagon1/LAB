@@ -365,6 +365,52 @@ int ntoi(int *a, int n) {
     return wynik;
 }
 
+void usunzera(int **a, int *n){
+    int licznik = 0;
+    for(int i = 0; i < *n; i++){
+        if((*a)[i] != 0){
+            licznik++;
+        }
+    }
+    int *pom;
+    pom = malloc((size_t) licznik * sizeof(int));
+    licznik = 0;
+    for(int i = 0; i < *n; i++){
+        if((*a)[i] != 0){
+            pom[licznik] = (*a)[i];
+            licznik++;
+        }
+    }
+    free(*a);
+    *a = pom;
+    *n = licznik;
+}
+
+void skroctablice(int **a, int *n){
+    int licznik = 0;
+    for(int i = 0; i < *n; i++){
+        if((*a)[i] != 0){
+            licznik++;
+        }
+    }
+    int *pom;
+    pom = malloc((size_t) licznik * sizeof(int));
+    licznik = 0;
+    for(int i = 0; i < *n; i++){
+        if((*a)[i] != 0){
+            if((*a)[i] < 0){
+                pom[licznik] = (*a)[i];
+            }else{
+                pom[licznik] = (*a)[i] - 1;
+            }
+            licznik++;
+        }
+    }
+    free(*a);
+    *a = pom;
+    *n = licznik;
+}
+
 void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
     int *pom;
     int pomn = an + bn;
@@ -373,7 +419,8 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
     pom = malloc((size_t) pomn * sizeof(int));
     int licznik_a = 0;
     int licznik_b = 0;
-    for(int i = 0; i < pomn; i++){
+    int licznik;
+    for(int i = 0; i < pomn; i++) {
         if (licznik_a < an && licznik_b < bn) {
             /* jednoczesnie dodatnie */
             if (a[licznik_a] >= 0 && b[licznik_b] >= 0) {
@@ -431,7 +478,7 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
 
             }
             /* jednoczesnie ujemne */
-            else {
+            else if (a[licznik_a] < 0 && b[licznik_b] < 0){
                 if (a[licznik_a] == b[licznik_b]) {
                     pom[i] = 0;
                     pom[i+1] = a[licznik_a] - 1;
@@ -448,7 +495,6 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
                     licznik_b++;
                 }
             }
-        }
         else if (licznik_a >= an) {
             if(b[licznik_b] >= 0){
                 pom[i] = b[licznik_b] + 1;
@@ -474,8 +520,8 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
     pom_wynik = malloc ((size_t) licznik * sizeof(int));
     licznik = 0;
     for (int i = 0; i < pomn; i++) {
-        if (pom[n] != 0) {
-            pom_wynik[licznik] = pom[n];
+        if (pom[i] != 0) {
+            pom_wynik[licznik] = pom[i];
             licznik++;
         }
     }
