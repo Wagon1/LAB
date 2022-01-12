@@ -449,7 +449,7 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
                     licznik_b++;
                     i++;
                 }
-                else if (a[licznik_a] + 1 > b[licznik_b] * -1)
+                else if (a[licznik_a] + 1 > b[licznik_b] * -1) {
                     pom[i] = b[licznik_b];
                     licznik_b++;
                 }
@@ -517,6 +517,7 @@ void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
     for (int i = 0; i < pomn; i++) {
         if (pom[i] != 0) licznik++;
     }
+    pomn_wynik = licznik;
     pom_wynik = malloc ((size_t) licznik * sizeof(int));
     licznik = 0;
     for (int i = 0; i < pomn; i++) {
@@ -580,6 +581,7 @@ void nadd(int *a, int an, int *b, int bn, int **c, int *cn){
     for (int i = 0; i < pomn; i++) {
         if (pom[i] != 0) licznik++;
     }
+    pomn_wynik = licznik;
     pom_wynik = malloc((size_t) licznik * sizeof(int));
     licznik = 0;
     for (int i = 0; i < pomn; i++) {
