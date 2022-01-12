@@ -37,7 +37,7 @@ void przeniesienie_bi_petla(int *a, int i) {
     }
 }
 
-void dec2naf(int x, int **tab, int *a) { 
+void dec2naf(int x, int **tab, int *a) {
     int rozmiar = 0;
     int *naf = NULL;
     int czy_ujemna = 0;
@@ -81,7 +81,7 @@ void naf2napier(int *x, int xn, int **tab, int *a) {
     int *n_naf = NULL;
     int rozmiar = 0;
     int b = 0;
-    
+
     for (int i = 0; i < xn; i++) {
         if (x[i] != 0) rozmiar++;
     }
@@ -153,7 +153,7 @@ void napier2naf(int *a, int n, int **tab, int *tabn) {
     int dlugosc_bi;
     int pozycja;
     /* jesli jest to liczba 0  */
-    if (a == NULL && n == 0) { 
+    if (a == NULL && n == 0) {
         bi = malloc(sizeof(int));
         bi[0] = 0;
         dlugosc_bi = 1;
@@ -255,7 +255,7 @@ void bi_add_1(int *a, int an, int **c, int *cn) { //a jest w bi
     int *suma_bbr;
     int suma_bbrn;
     suman = an + 1;
-    suma = malloc((size_t) suman * sizeof *suma ); 
+    suma = malloc((size_t) suman * sizeof *suma );
     for (int i = 0; i < suman; i++) {
         suma[i] = 0;
     }
@@ -297,7 +297,7 @@ void iton(int x, int **a, int *n) {
     }
     else {
         dec2naf(x, &bbr, &dlugosc_BBR);
-        /* w x jest bbr*/  
+        /* w x jest bbr*/
         naf2napier(bbr, dlugosc_BBR, &n_naf, &b);
         free(bbr);
     }
@@ -306,7 +306,7 @@ void iton(int x, int **a, int *n) {
     *n = b;
     /* w dec2naf() x w kazdym obrocie petli zmniejsza sie o polowe
     zlozonosc iton() bedzie nlog(n) */
-    
+
     bbr = NULL;
 }
 
@@ -338,7 +338,7 @@ int ntoi(int *a, int n) {
             free(bi);
             if (wynik < -1) {
             	wynik = wynik + INT_MAX;
-            } 
+            }
             else {
             	return 0;
             }
@@ -350,7 +350,7 @@ int ntoi(int *a, int n) {
             free(bi);
             if (wynik > 0) {
             	wynik = wynik + INT_MAX;
-            } 
+            }
             else {
             	return 0;
             }
@@ -365,197 +365,196 @@ int ntoi(int *a, int n) {
     return wynik;
 }
 
-void usunzera(int **a, int *n){
-    int licznik = 0;
-    for(int i = 0; i < *n; i++){
-        if((*a)[i] != 0){
-            licznik++;
-        }
-    } 
-    int *new;
-    new = malloc((size_t) licznik * sizeof(int));
-    licznik = 0;
-    for(int i = 0; i < *n; i++){
-        if((*a)[i] != 0){
-            new[licznik] = (*a)[i];
-            licznik++;
-        }
-    }
-    free(*a);
-    *a = new;
-    *n = licznik;
-}
-
-void skroctablice(int **a, int *n){
-    int licznik = 0;
-    for(int i = 0; i < *n; i++){
-        if((*a)[i] != 0){
-            licznik++;
-        }
-    } 
-    int *new;
-    new = malloc((size_t) licznik * sizeof(int));
-    licznik = 0;
-    for(int i = 0; i < *n; i++){
-        if((*a)[i] != 0){
-            if((*a)[i] < 0){
-                new[licznik] = (*a)[i];
-            }else{
-                new[licznik] = (*a)[i] - 1;
-            }
-            licznik++;
-        }
-    }
-    free(*a);
-    *a = new;
-    *n = licznik;
-}
-
-void mergetablice(int *a, int an, int *b, int bn, int **c, int *cn){
-    int len = an + bn;
-    int *new;
-    new = malloc((size_t) len * sizeof(int));
-    int acounter = 0;
-    int bcounter = 0;
-    for(int i = 0; i < len; i++){
-        if(acounter < an){
-            //mamy cos w a
-            if(bcounter < bn){
-                //mamy cos w a i b
-                if(a[acounter] >= 0){
-                    if(b[bcounter] >= 0){
-                        //oba z +
-                        if(a[acounter] == b[bcounter]){
-                            new[i] = 0;
-                            new[i+1] = a[acounter] + 2;
-                            acounter++;
-                            bcounter++;
-                            i++;
-                        }else if(a[acounter] > b[bcounter]){
-                            new[i] = b[bcounter] + 1;
-                            bcounter++;
-                        }else{
-                            new[i] = a[acounter] + 1;
-                            acounter++;
-                        }
-                    }else{
-                        //a + b -
-                        if(a[acounter] + 1 ==    b[bcounter] * -1){
-                            new[i] = 0;
-                            new[i+1] = 0;
-                            acounter++;
-                            bcounter++;
-                            i++;
-                        }else if(a[acounter] + 1 > b[bcounter] * -1){
-                            new[i] = b[bcounter];
-                            bcounter++;
-                        }else{
-                            new[i] = a[acounter] + 1;
-                            acounter++;
-                        }
-                    }
-                }else{
-                    if(b[bcounter] >= 0){
-                        //a- b+
-                        if(b[bcounter] + 1 == a[acounter] * -1){
-                            new[i] = 0;
-                            new[i+1] = 0;
-                            acounter++;
-                            bcounter++;
-                            i++;
-                        }else if(b[bcounter] + 1 > a[acounter] * -1){
-                            new[i] = a[acounter];
-                            acounter++;
-                        }else{
-                            new[i] = b[bcounter] + 1;
-                            bcounter++;
-                        }
-                    }else{
-                        //a- b-
-                        if(a[acounter] == b[bcounter]){
-                            new[i] = 0;
-                            new[i+1] = a[acounter] - 1;
-                            acounter++;
-                            bcounter++;
-                            i++;
-                        }else if(a[acounter] > b[bcounter]){
-                            new[i] = a[acounter];
-                            acounter++;
-                        }else{
-                            new[i] = b[bcounter];
-                            bcounter++;
-                        }
-                    }
+void scalanie(int *a, int an, int *b, int bn, int **c, int *cn){
+    int *pom;
+    int pomn = an + bn;
+    int *pom_wynik;
+    int pomn_wynik;
+    pom = malloc((size_t) pomn * sizeof(int));
+    int licznik_a = 0;
+    int licznik_b = 0;
+    for(int i = 0; i < pomn; i++){
+        if (licznik_a < an && licznik_b < bn) {
+            /* jednoczesnie dodatnie */
+            if (a[licznik_a] >= 0 && b[licznik_b] >= 0) {
+                if(a[licznik_a] == b[licznik_b]){
+                    pom[i] = 0;
+                    pom[i+1] = a[licznik_a] + 2;
+                    licznik_a++;
+                    licznik_b++;
+                    i++;
                 }
-            }else{
-                //nie ma nic w b bierzemy z a
-                if(a[acounter] >= 0){
-                    new[i] = a[acounter] + 1;
-                }else{
-                    new[i] = a[acounter];
+                else if(a[licznik_a] > b[licznik_b]){
+                    pom[i] = b[licznik_b] + 1;
+                    licznik_b++;
                 }
-                acounter++;
+                else{
+                    pom[i] = a[licznik_a] + 1;
+                    licznik_a++;
+                }
             }
-        }else{
-            //nie ma nic w a bierzemy z b
-            if(b[bcounter] >= 0){
-                new[i] = b[bcounter] + 1;
+            /* a dod, b uj */
+            else if (a[licznik_a] >= 0 && b[licznik_b] < 0) {
+                if (a[licznik_a] + 1 == b[licznik_b] * -1) {
+                    pom[i] = 0;
+                    pom[i+1] = 0;
+                    licznik_a++;
+                    licznik_b++;
+                    i++;
+                }
+                else if (a[licznik_a] + 1 > b[licznik_b] * -1)
+                    pom[i] = b[licznik_b];
+                    licznik_b++;
+                }
+                else {
+                    pom[i] = a[licznik_a] + 1;
+                    licznik_a++;
+                }
+            }
+            /* a uj, b dod */
+            else if (a[licznik_a] < 0 && b[licznik_b] >= 0) {
+                if (b[licznik_b] + 1 == a[licznik_a] * -1) {
+                    pom[i] = 0;
+                    pom[i+1] = 0;
+                    licznik_a++;
+                    licznik_b++;
+                    i++;
+                }
+                else if (b[licznik_b] + 1 > a[licznik_a] * -1) {
+                    pom[i] = a[licznik_a];
+                    licznik_a++;
+                }
+                else {
+                    pom[i] = b[licznik_b] + 1;
+                    licznik_b++;
+                }
+
+            }
+            /* jednoczesnie ujemne */
+            else {
+                if (a[licznik_a] == b[licznik_b]) {
+                    pom[i] = 0;
+                    pom[i+1] = a[licznik_a] - 1;
+                    licznik_a++;
+                    licznik_b++;
+                    i++;
+                }
+                else if (a[licznik_a] > b[licznik_b]) {
+                    pom[i] = a[licznik_a];
+                    licznik_a++;
+                }
+                else {
+                    pom[i] = b[licznik_b];
+                    licznik_b++;
+                }
+            }
+        }
+        else if (licznik_a >= an) {
+            if(b[licznik_b] >= 0){
+                pom[i] = b[licznik_b] + 1;
             }else{
-                new[i] = b[bcounter];
+                pom[i] = b[licznik_b];
             }
-            bcounter++;
+            licznik_b++;
+        }
+        else { // licznik_b >= bn
+            if (a[licznik_a] >= 0) {
+                    pom[i] = a[licznik_a] + 1;
+            }
+            else {
+                pom[i] = a[licznik_a];
+            }
+            licznik_a++;
         }
     }
-    usunzera(&new, &len);
-    *c = new;
-    *cn = len;
+    licznik = 0;
+    for (int i = 0; i < pomn; i++) {
+        if (pom[i] != 0) licznik++;
+    }
+    pom_wynik = malloc ((size_t) licznik * sizeof(int));
+    licznik = 0;
+    for (int i = 0; i < pomn; i++) {
+        if (pom[n] != 0) {
+            pom_wynik[licznik] = pom[n];
+            licznik++;
+        }
+    }
+    free(pom);
+    *c = pom_wynik;
+    *cn = pomn_wynik;
 }
 
 void nadd(int *a, int an, int *b, int bn, int **c, int *cn){
-    int *new;
-    int len;
-    mergetablice(a, an, b, bn, &new, &len);
+    int *pom;
+    int pomn;
+    int *pom_wynik;
+    int pomn_wynik;
     int licznik = 0;
-    while(licznik < len - 1){
-        if(abs(new[licznik]) == abs(new[licznik+1])){
-            if(new[licznik] < 0 && new[licznik+1] < 0){
-                new[licznik] = 0;
-                new[licznik+1] = new[licznik+1] - 1;
-            }else if(new[licznik] > 0 && new[licznik + 1] > 0){
-                new[licznik] = 0;
-                new[licznik+1] = new[licznik+1] + 1;
-            }else{
-                new[licznik] = 0;
-                new[licznik+1] = 0;
+    scalanie(a, an, b, bn, &pom, &pomn);
+    while (licznik < pomn - 1){
+        if (abs(pom[licznik]) == abs(pom[licznik+1])){
+            if (pom[licznik] < 0 && pom[licznik+1] < 0){
+                pom[licznik] = 0;
+                pom[licznik+1] = pom[licznik+1] - 1;
             }
-        }else if(abs(new[licznik]) == abs(new[licznik+1]) - 1){
-            if(new[licznik] < 0){
-                if(new[licznik+1] < 0){
-                    new[licznik] = new[licznik] * -1;
-                    new[licznik + 1] = new[licznik + 1] - 1;
-                }else{
-                    new[licznik] = new[licznik] * -1;
-                    new[licznik + 1] = 0;
+            else if (pom[licznik] > 0 && pom[licznik + 1] > 0){
+                pom[licznik] = 0;
+                pom[licznik+1] = pom[licznik+1] + 1;
+            }
+            else {
+                pom[licznik] = 0;
+                pom[licznik+1] = 0;
+            }
+        }
+        else if (abs(pom[licznik]) == abs(pom[licznik+1]) - 1){
+            if (pom[licznik] < 0){
+                if (pom[licznik+1] < 0){
+                    pom[licznik] = pom[licznik] * -1;
+                    pom[licznik + 1] = pom[licznik + 1] - 1;
                 }
-            }else{
-                if(new[licznik+1] < 0){
-                    new[licznik] = new[licznik] * -1;
-                    new[licznik + 1] = 0;
-                }else{
-                    new[licznik] = new[licznik] * -1;
-                    new[licznik + 1] = new[licznik + 1] + 1;
+                else {
+                    pom[licznik] = pom[licznik] * -1;
+                    pom[licznik + 1] = 0;
                 }
             }
-        }       
+            else {
+                if (pom[licznik+1] < 0){
+                    pom[licznik] = pom[licznik] * -1;
+                    pom[licznik + 1] = 0;
+                }
+                else {
+                    pom[licznik] = pom[licznik] * -1;
+                    pom[licznik + 1] = pom[licznik + 1] + 1;
+                }
+            }
+        }
         licznik++;
-
     }
-    skroctablice(&new, &len);
-    *c = new;
-    *cn = len;
+    licznik = 0;
+    for (int i = 0; i < pomn; i++) {
+        if (pom[i] != 0) licznik++;
+    }
+    pom_wynik = malloc((size_t) licznik * sizeof(int));
+    licznik = 0;
+    for (int i = 0; i < pomn; i++) {
+        if (pom[i] != 0) {
+            if (pom[i] < 0) {
+                pom_wynik[licznik] = pom[i];
+            }
+            else {
+                pom_wynik[licznik] = pom[i] - 1;
+            }
+            licznik++;
+        }
+    }
+    free(pom);
+    *c = pom_wynik;
+    *cn = pomn_wynik;
 }
 
 void nsub(int *a, int an, int *b, int bn, int **c, int *cn){
+    /* dzielenie - dodanie liczby przeciwnej */
+    /* zamieniam wartosc liczby b na przeciwny */
     for(int i = 0; i < bn; i++){
         b[i] = (b[i] + 1) * -1;
     }
@@ -637,8 +636,8 @@ void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
     int *pom;
     int pomn;
     int ujemna;
-    if(a[an-1] < 0){
-        if(b[bn-1] < 0){
+    if (a[an-1] < 0) {
+        if (b[bn-1] < 0) {
             ujemna = 1;
             for(int i = 0; i < bn; i++){
                 b[i] = (b[i] + 1) * -1;
@@ -646,7 +645,8 @@ void nmul(int *a, int an, int *b, int bn, int **c, int *cn) {
             for(int i = 0; i < an; i++){
                 a[i] = (a[i] + 1) * -1;
             }
-        }else{
+        }
+        else {
             ujemna = -1;
             for(int i = 0; i < an; i++){
                 a[i] = (a[i] + 1) * -1;
@@ -746,7 +746,7 @@ void nexp(int *a, int an, int *b, int bn, int **c, int *cn) { //a to podstawa, b
             potega_wynik = potega_pom;
             potega_wynikn = potega_pomn;
             potega_pom = NULL;
-        
+
             bi_sub_1(naf_b, naf_bn, &naf_pom, &naf_pomn);
             free(naf_b);
             naf_b = naf_pom;
@@ -784,12 +784,12 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     int *iloraz_napier = NULL;
     int ilorazn_napier;
     int rodzaj = 0;
-    napier2naf(a, an, &naf_a, &naf_an); 
-    napier2naf(b, bn, &naf_b, &naf_bn); 
+    napier2naf(a, an, &naf_a, &naf_an);
+    napier2naf(b, bn, &naf_b, &naf_bn);
     iloraz = malloc(sizeof(int));
     ilorazn = 1;
     iloraz[0] = 0;
-    /* w tym miejscu zamienia a i b na dodatnie, i zapamietam rodzaj dzielenia */
+    /* w tym miejscu zamienia a i b na dodatnie, i zapamietam rodzaj dziepomnia */
     if (naf_a[naf_an - 1] > 0) {
         if (naf_b[naf_bn - 1] > 0) {
             rodzaj = 1; // a>0, b>0
@@ -861,7 +861,7 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
         resztan = naf_an;
     }
     /* jesli a i b dodatnie, to nie zmieniam nic */
-    /* jesli a dod, b uj, to iloraz jest przzeciwny, reszta bez zmian */ 
+    /* jesli a dod, b uj, to iloraz jest przzeciwny, reszta bez zmian */
     if (rodzaj == 2) {
         for (int i = 0; i < ilorazn; i++) {
             iloraz[i] = -1 * iloraz[i];
@@ -896,7 +896,7 @@ void ndivmod(int *a, int an, int *b, int bn, int **q, int *qn, int **r, int *rn)
     free(naf_b);
     free(iloraz_pom);
     free(reszta_bbr);
-    free(iloraz_bbr); 
+    free(iloraz_bbr);
 }
 
 
