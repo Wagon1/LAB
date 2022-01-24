@@ -67,17 +67,12 @@ void list_of_edges(TEdge ***edge, int *dlugosc, int *index, char *dane, int dlug
 int printGraph(struct Graph* graph, int i, int il_wezl) {
     int *osiagalne = malloc((size_t) il_wezl * sizeof(int));
     for (int i = 0; i < il_wezl; i++) osiagalne[i] = -1;
- /*   for(int b = 0; b < 6; b++) {
-    printf("%d\n", osiagalne[b]);
-    }
-
-    printf("\n");*/
+    
     int j = 0;
   //  print current vertex and all its neighbors
     TNode* ptr = graph->head[i];
     while (ptr != NULL)
     {
-  //      printf("(%d —> %d)\t", i, ptr->dest);
         printf("\n");
         osiagalne[j] = ptr->dest;
         j++;
@@ -88,27 +83,15 @@ int printGraph(struct Graph* graph, int i, int il_wezl) {
         i = osiagalne[k];
         ptr = graph->head[i];
         while (ptr != NULL) {
-  //          printf("(%d —> %d)\t", i, ptr->dest);
-  //          printf("\n");
             int dokad = ptr->dest;
             int l = 0, m = j;
             while (l < m && dokad != osiagalne[l]) {
-                    //printf ("weszlo do while\n");
-      //          printf ("l == %d, m == %d, dokad == %d, w tablicy == %d\n",l, m, dokad, osiagalne[l]);
-       //         printf("\n");
                 l++;
 
-        /*        for(int b = 0; b < 6; b++) {
-    printf("%d\n", osiagalne[b]);
-    }
-
-    printf("\n");*/
 
             }
-            if (l == m) {//printf ("jest inny\n");
+            if (l == m) {
                 osiagalne[j] = ptr->dest;
-        //        printf ("wstawiam, a[j] == %d, j == %d\n",osiagalne[j], j);
-      //          printf ("\n");
                 j++;
             }
             ptr = ptr->next;
@@ -144,14 +127,6 @@ int main(void) {
         int dlugosc;
         wczytywanie_wyrazu(pobrane_dane, &pozycja, &nowy_wyr, &dlugosc);
 
-
- /*       for(int i = 0; i < dlugosc; i++) {
-        printf("%c", nowy_wyr[i]);
-    }
-        printf("\n");
-
-printf("111\n");*/
-
         if (i == 0) { //printf("222\n");
             wezly[i] = nowy_wyr;
             krawedz[miejsce].src = i;
@@ -183,11 +158,6 @@ printf("111\n");*/
         }
     }
     ilosc_wezlow = i;
- /*   for(int i = 0; i<miejsce; i++) {
-        printf(" %d --> %d\n", krawedz[i].src, krawedz[i].dest);
-    }
-
-    printf("start == %d\n", index_start);*/
 
     TGraph *graph = stworz_Graph(krawedz, maks_il_wezl, ilosc_wezlow);
 
@@ -213,9 +183,6 @@ void wczytywanie_dane(char **a, int *an, int *ilosc) {
 //    printf("YYX\n");
     while ((znak = getchar()) != '{' );
     while ((znak = getchar()) != '}') {
-   //     printf("111\n");
-  //      printf("i = %d\n",i);
-  //      printf("znak = %c\n", znak);
         if (i == rozmiar) {
             rozmiar += 100;
             dane = realloc(dane, (size_t) rozmiar * sizeof *dane);
@@ -293,13 +260,6 @@ void list_of_edges(TEdge ***edge, int *dlugosc, int *index, char *dane, int dlug
         int dlugosc;
         wczytywanie_wyrazu(dane, &pozycja, &nowy_wyr, &dlugosc);
 
-
- /*       for(int i = 0; i < dlugosc; i++) {
-        printf("%c", nowy_wyr[i]);
-    }
-        printf("\n");
-
-printf("111\n");*/
         if (i == 0) { //printf("222\n");
             wezly[i] = nowy_wyr;
             krawedz[miejsce].src = i;
