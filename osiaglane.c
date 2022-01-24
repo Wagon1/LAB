@@ -129,7 +129,7 @@ int main(void) {
     wczytywanie_dane(&pobrane_dane, &dlugosc_dane, &maks_il_wezl);
 
     printf("dlugosc dane == %d\n", dlugosc_dane);
-    
+
     TEdge *krawedz = malloc((size_t) maks_il_wezl * sizeof(TEdge));
     int miejsce = 0;
 
@@ -140,9 +140,12 @@ int main(void) {
     bool skad = true;
     char **wezly = malloc((size_t) maks_il_wezl * sizeof(char*));
     int ilosc_wezlow;
-    while (pozycja < dlugosc_dane) { //printf("while\n");
+
+    printf("dlugosc dane == %d\n", dlugosc_dane);
+    while (pozycja < dlugosc_dane - 1) { printf("pozycja == %d\n", pozycja);
         char *nowy_wyr;
         int dlugosc;
+        printf("TESTTT\n");
         wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &nowy_wyr, &dlugosc);
 
 
@@ -151,7 +154,7 @@ int main(void) {
     }
         printf("\n");
 
-printf("111\n");
+printf("po wypisaniu\n");
 
         if (i == 0) { //printf("222\n");
             wezly[i] = nowy_wyr;
