@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#define N 6
+#define N 10
 
 // Data structure to store adjacency list nodes of the graph
 typedef struct Node{
@@ -58,11 +58,9 @@ TGraph* stworz_Graph(TEdge edges[], int n, int wezly) {
 
 void wczytywanie_dane(char **a, int *an, int *ilosc);
 
-void wczytywanie_wyrazu(char *in, int *liczba, char **out, int *outn);
+void wczytywanie_wyrazu(char *in, int inn, int *liczba, char **out, int *outn);
 
 bool czy_to_samo(char *a, char *b);
-
-void list_of_edges(TEdge ***edge, int *dlugosc, int *index, char *dane, int dlugosc_dane, int maks_il_wezl);
 
 int printGraph(struct Graph* graph, int i, int il_wezl) {
     int *osiagalne = malloc((size_t) il_wezl * sizeof(int));
@@ -130,6 +128,8 @@ int main(void) {
 
     wczytywanie_dane(&pobrane_dane, &dlugosc_dane, &maks_il_wezl);
 
+    printf("dlugosc dane == %d\n", dlugosc_dane);
+    
     TEdge *krawedz = malloc((size_t) maks_il_wezl * sizeof(TEdge));
     int miejsce = 0;
 
@@ -143,15 +143,15 @@ int main(void) {
     while (pozycja < dlugosc_dane) { //printf("while\n");
         char *nowy_wyr;
         int dlugosc;
-        wczytywanie_wyrazu(pobrane_dane, &pozycja, &nowy_wyr, &dlugosc);
+        wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &nowy_wyr, &dlugosc);
 
 
- /*       for(int i = 0; i < dlugosc; i++) {
+        for(int i = 0; i < dlugosc; i++) {
         printf("%c", nowy_wyr[i]);
     }
         printf("\n");
 
-printf("111\n");*/
+printf("111\n");
 
         if (i == 0) { //printf("222\n");
             wezly[i] = nowy_wyr;
@@ -244,14 +244,17 @@ void wczytywanie_dane(char **a, int *an, int *ilosc) {
     *ilosc = liczba / 2;
 }
 
-void wczytywanie_wyrazu(char *in, int *liczba, char **out, int *outn) {
+void wczytywanie_wyrazu(char *in, int inn, int *liczba, char **out, int *outn) {
     char *wyraz = malloc(20 * (sizeof (char)));
     int i = (*liczba);
     int j = 0;
     int rozmiar = 0;
     bool dane = true;
     while (isalpha(in[i]) == 0) i++;
-    while (in[i] != '}' && dane) {
+    while (i < inn && in[i] != '}' && dane) {
+
+            printf("pozycja i dane == %d\n", i);
+
         if (j == rozmiar) {
             rozmiar += 20;
             wyraz = realloc(wyraz, (size_t) rozmiar * sizeof (char));
@@ -277,65 +280,3 @@ bool czy_to_samo(char *a, char *b) {
     else if (strcmp(a, b) != 0) return false;
     return true;
 }
-
-void list_of_edges(TEdge ***edge, int *dlugosc, int *index, char *dane, int dlugosc_dane, int maks_il_wezl) {
-    TEdge *krawedz = malloc((size_t) maks_il_wezl * sizeof(TEdge));
-    int miejsce = 0;
-
-
-    char start[] = "start";
-    int index_start;
-    int pozycja = 0;
-    int i = 0;
-    bool skad = true;
-    char **wezly = malloc((size_t) maks_il_wezl * sizeof(char*));
-    while (pozycja < dlugosc_dane) { //printf("while\n");
-        char *nowy_wyr;
-        int dlugosc;
-        wczytywanie_wyrazu(dane, &pozycja, &nowy_wyr, &dlugosc);
-
-
- /*       for(int i = 0; i < dlugosc; i++) {
-        printf("%c", nowy_wyr[i]);
-    }
-        printf("\n");
-
-printf("111\n");*/
-        if (i == 0) { //printf("222\n");
-            wezly[i] = nowy_wyr;
-            krawedz[miejsce].src = i;
-            if (czy_to_samo(nowy_wyr, start)) index_start = i;
-            i++;
-            skad = false;
-        }
-        else { //printf("333\n");
-            int j = 0;
-            while (j < i && !czy_to_samo(nowy_wyr, wezly[j])) {
-                j++;
-            }
-            if (j == i) {//printf("nowy\n");
-                wezly[i] = nowy_wyr;
-                if (czy_to_samo(nowy_wyr, start)) index_start = i;
-                i++;
-            }
-            if (skad) {//printf("skad\n");
-                krawedz[miejsce].src = j;
-                skad = false;
-           //     printf("j = %d\n", j);
-            }
-            else {//printf("dokad\n");
-                krawedz[miejsce].dest = j;
-                miejsce++;
-                skad = true;
-             //   printf("j = %d\n", j);
-            }
-        }
-    }
-
-
-    **edge = krawedz;
-    *dlugosc = miejsce;
-    *index = index_start;
-}
-
-
