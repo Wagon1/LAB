@@ -4,19 +4,19 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-// Data structure to store adjacency list nodes of the graph
+// Struktura zapisujaca wezel w liscie sasiedztwa.
 typedef struct Node{
     int dest;
     struct Node* next;
 } TNode;
 
-// Data structure to store a graph object
+// Struktura zapisujaca graf.
 typedef struct Graph{
-    // An array of pointers to Node to represent an adjacency list
+    // Tablica wskaznikow do wezlow typu TNode.
     TNode **head;
 } TGraph;
 
-// Data structure to store a graph edge
+// Struktura zapisujaca krawedzie miedzy wezlami.
 typedef struct Edge {
     int src, dest;
 } TEdge;
