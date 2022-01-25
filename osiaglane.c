@@ -28,11 +28,11 @@ static TGraph* stworz_Graph(TEdge edges[], int n, int wezly);
 
 static void wczytywanie_dane(char **a, int *an, int *ilosc);
 
-static char* wczytywanie_wyrazu(char *in, int inn, int *liczba);
+static char* wczytywanie_wyrazu(char const *in, int inn, int *liczba);
 
-static bool czy_to_samo(const char *a, const char *b);
+static bool czy_to_samo(char const *a, char const *b);
 
-static int amount_of_Node(struct Graph* graph, int index_start, int maks_wezel);
+static int amount_of_Node(struct Graph* const graph, int index_start, int maks_wezel);
 
 int main(void) {
     char *pobrane_dane = NULL;
@@ -160,7 +160,7 @@ static void wczytywanie_dane(char **a, int *an, int *ilosc) {
     *ilosc = liczba / 2;
 }
 
-static char* wczytywanie_wyrazu(char *in, int inn, int *liczba) {
+static char* wczytywanie_wyrazu(char const *in, int inn, int *liczba) {
     char *wyraz = malloc(20 * (sizeof (char))); // mallocuje juz pewna pamiec na poczatku.
     int i = (*liczba); // liczba to pozycja w tablicy wczytane_dane, na ktorej trzeba zaczac wczywywanoe.
     int j = 0; 
@@ -189,13 +189,13 @@ static char* wczytywanie_wyrazu(char *in, int inn, int *liczba) {
     return wyraz;
 }
 
-static bool czy_to_samo(const char *a, const char *b) {
+static bool czy_to_samo(char const *a, char const *b) {
     if (strlen(a) != strlen(b)) return false; // Jesli dl. a jest rozna od dl. b, to inne.
     else if (strcmp(a, b) != 0) return false; // Porownuje a i b.
     return true;
 }
 
-static int amount_of_Node(struct Graph* graph, int index_start, int maks_wezel) {
+static int amount_of_Node(struct Graph* const graph, int index_start, int maks_wezel) {
     // Tablica osiaglanie moze byc maksymalnie wielkosci maks_wezel, czyli ilosc wezlow w grafie.
     int *osiagalne = malloc ((size_t) maks_wezel * sizeof (int));
     // Ustawiam wszystkie komorki na -1, bo zaden z wezlow nie moze miec indeksu -1.
