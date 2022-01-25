@@ -15,7 +15,7 @@ typedef struct Node{
 // Data structure to store a graph object
 typedef struct Graph{
     // An array of pointers to Node to represent an adjacency list
-    TNode* head[N];
+    TNode **head;
 } TGraph;
 
 // Data structure to store a graph edge
@@ -30,7 +30,7 @@ TGraph* stworz_Graph(TEdge edges[], int n, int wezly) {
  //   TNode* graph = malloc((size_t) wezly * sizeof(*TNode));
 
  //   (graph->head) = realloc((graph->head), (size_t) wezly * (sizeof)(int));
- //   (graph->(*head)) = malloc((size_t) wezly * (sizeof)(graph->(*head)));
+    (graph->head) = malloc((size_t) wezly * sizeof(TNode));
 
     // initialize head pointer for all vertices
     for (int i = 0; i < wezly; i++) {
@@ -60,13 +60,11 @@ TGraph* stworz_Graph(TEdge edges[], int n, int wezly) {
 
 void wczytywanie_dane(char **a, int *an, int *ilosc);
 
-void wczytywanie_wyrazu(char *in, int inn, int *liczba, char **out, int *outn);
+char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc);
 
 bool czy_to_samo(char *a, char *b);
 
 int amount_of_Node(struct Graph* graph, int index_start, int maks_wezel);
-
-void destroy(TNode *l);
 
 int main(void) {
     char *pobrane_dane = NULL;
@@ -85,44 +83,55 @@ int main(void) {
     int pozycja = 0;
     int i = 0;
     bool skad = true;
-    char **wezly = malloc((size_t) (maks_il_wezl + 1) * sizeof(char*));
+    char **wezly = malloc((size_t) (maks_il_wezl * 2) * sizeof(char*));
     int ilosc_wezlow;
 
     printf("dlugosc dane == %d\n", dlugosc_dane);
     while (pozycja < dlugosc_dane - 1) { printf("pozycja == %d\n", pozycja);
-        char *nowy_wyr;
+        int dlugosc_wyr;
+        char *nowy_wyr = wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &dlugosc_wyr);
+        
+        char *kopia;
+        kopia = malloc((size_t) dlugosc_wyr * sizeof(char));
+        for (int i = 0; i < dlugosc_wyr; i++) {
+            kopia[i] = nowy_wyr[i];
+        }
+        free(nowy_wyr);
+        
         int dlugosc;
-        printf("TESTTT\n");
-        wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &nowy_wyr, &dlugosc);
-
-
-        for(int i = 0; i < dlugosc; i++) {
-        printf("%c", nowy_wyr[i]);
-    }
+        printf("TESTTT wyraz\n");
+        
+        for (int i = 0; i< dlugosc_wyr; i++) {
+        printf("%c", kopia[i]);
+        }
         printf("\n");
-
-printf("po wypisaniu\n");
-
-        if (i == 0) { //printf("222\n");
-            wezly[i] = nowy_wyr;
+        
+        if (i == 0) { printf("pierwszy\n");
+        printf("stawiam do komorki %d\n", i);
+            wezly[i] = kopia;
             krawedz[miejsce].src = i;
-            if (czy_to_samo(nowy_wyr, start)) index_start = i;
+            if (czy_to_samo(kopia, start)) index_start = i;
             i++;
             skad = false;
         }
-        else { //printf("333\n");
+        else { printf("nie pierwszy\n");
             int j = 0;
-            while (j < i && !czy_to_samo(nowy_wyr, wezly[j])) {
+            while (j < i && !czy_to_samo(kopia, wezly[j])) {
                 j++;
             }
-            if (j == i) {//printf("nowy\n");
-                wezly[i] = nowy_wyr;
+            if (j == i) {printf("nowy\n");
+                wezly[i] = kopia;
 
-                printf ("ktory wezel == %d\n", i);
+                printf ("stawiam do wezel %d\n", i);
                 printf("maks il wezlow == %d\n", maks_il_wezl + 1);
+                printf("\n");
 
-                if (czy_to_samo(nowy_wyr, start)) index_start = i;
+                if (czy_to_samo(kopia, start)) index_start = i;
                 i++;
+            }
+            else { 
+            printf("taka sama, zwalniam kopie\n");
+                free(kopia);
             }
             if (skad) {//printf("skad\n");
                 krawedz[miejsce].src = j;
@@ -136,6 +145,7 @@ printf("po wypisaniu\n");
              //   printf("j = %d\n", j);
             }
         }
+        
     }
     ilosc_wezlow = i;
  /*   for(int i = 0; i<miejsce; i++) {
@@ -159,6 +169,7 @@ printf("po wypisaniu\n");
     	    free(pom);
     	}
     }
+    free(graph->head);
     free(graph);
     free(krawedz);
     for (int b = 0; b < ilosc_wezlow; b++) {
@@ -210,7 +221,7 @@ void wczytywanie_dane(char **a, int *an, int *ilosc) {
     *ilosc = liczba / 2;
 }
 
-void wczytywanie_wyrazu(char *in, int inn, int *liczba, char **out, int *outn) {
+char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc) {
     char *wyraz = malloc(20 * (sizeof (char)));
     int i = (*liczba);
     int j = 0;
@@ -236,9 +247,10 @@ void wczytywanie_wyrazu(char *in, int inn, int *liczba, char **out, int *outn) {
         }
     }
     wyraz[j] = '\0';
-    *out = wyraz;
-    *outn = j + 1;
+  //  *out = wyraz;
+    *dlugosc = j + 1;
     *liczba = i;
+    return wyraz;
 }
 
 bool czy_to_samo(char *a, char *b) {
