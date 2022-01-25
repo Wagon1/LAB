@@ -25,9 +25,9 @@ static TGraph* stworz_Graph(TEdge edges[], int n, int wezly);
 
 static void wczytywanie_dane(char **a, int *an, int *ilosc);
 
-static char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc);
+static char* wczytywanie_wyrazu(const char *in, int inn, int *liczba, int *dlugosc);
 
-static bool czy_to_samo(char *a, char *b);
+static bool czy_to_samo(const char *a, const char *b);
 
 static int amount_of_Node(struct Graph* graph, int index_start, int maks_wezel);
 
@@ -48,32 +48,26 @@ int main(void) {
     while (pozycja < dlugosc_dane - 1) { 
         int dlugosc_wyr;
         char *nowy_wyr = wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &dlugosc_wyr);
-        char *kopia;
-        kopia = malloc((size_t) dlugosc_wyr * sizeof(char));
-        for (int j = 0; j < dlugosc_wyr; j++) {
-            kopia[j] = nowy_wyr[j];
-        }
-        free(nowy_wyr);
         if (i == 0) { 
-            wezly[i] = kopia;
+            wezly[i] = nowy_wyr;
             krawedz[miejsce].src = i;
-            if (czy_to_samo(kopia, start)) index_start = i;
+            if (czy_to_samo(nowy_wyr, start)) index_start = i;
             i++;
             skad = false;
         }
         else { 
             int j = 0;
-            while (j < i && !czy_to_samo(kopia, wezly[j])) {
+            while (j < i && !czy_to_samo(nowy_wyr, wezly[j])) {
                 j++;
             }
             if (j == i) {
-                wezly[i] = kopia;
+                wezly[i] = nowy_wyr;
 
-                if (czy_to_samo(kopia, start)) index_start = i;
+                if (czy_to_samo(nowy_wyr, start)) index_start = i;
                 i++;
             }
             else {
-                free(kopia);
+                free(nowy_wyr);
             }
             if (skad) {
                 krawedz[miejsce].src = j;
@@ -142,7 +136,7 @@ static void wczytywanie_dane(char **a, int *an, int *ilosc) {
     *ilosc = liczba / 2;
 }
 
-static char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc) {
+static char* wczytywanie_wyrazu(const char *in, int inn, int *liczba, int *dlugosc) {
     char *wyraz = malloc(20 * (sizeof (char)));
     int i = (*liczba);
     int j = 0;
@@ -169,7 +163,7 @@ static char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc) {
     return wyraz;
 }
 
-static bool czy_to_samo(char *a, char *b) {
+static bool czy_to_samo(const char *a, const char *b) {
     if (strlen(a) != strlen(b)) return false;
     else if (strcmp(a, b) != 0) return false;
     return true;
