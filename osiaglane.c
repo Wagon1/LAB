@@ -84,7 +84,7 @@ int main(void) {
     int miejsce = 0;
 
     char start[] = "start";
-    int index_start;
+    int index_start = -1;
     int pozycja = 0;
     int i = 0;
     bool skad = true;
@@ -98,19 +98,19 @@ int main(void) {
 
         char *kopia;
         kopia = malloc((size_t) dlugosc_wyr * sizeof(char));
-        for (int i = 0; i < dlugosc_wyr; i++) {
+        for (int j = 0; j < dlugosc_wyr; j++) {
 
-            kopia[i] = nowy_wyr[i];
+            kopia[j] = nowy_wyr[j];
         }
         free(nowy_wyr);
 
 
         printf("TESTTT wyraz\n");
 
-        for (int i = 0; i< dlugosc_wyr; i++) {
+   /*     for (int i = 0; i< dlugosc_wyr; i++) {
         printf("%c", kopia[i]);
         }
-        printf("\n");
+        printf("\n");*/
 
         if (i == 0) { printf("pierwszy\n");
         printf("stawiam do komorki %d\n", i);
@@ -195,8 +195,8 @@ void wczytywanie_dane(char **a, int *an, int *ilosc) {
     int i = 0;
     int liczba = 0;
 //    printf("YYX\n");
-    while ((znak = getchar()) != '{' );
-    while ((znak = getchar()) != '}') {
+    while ((znak = (char)getchar()) != '{' );
+    while ((znak = (char)getchar()) != '}') {
    //     printf("111\n");
   //      printf("i = %d\n",i);
   //      printf("znak = %c\n", znak);
