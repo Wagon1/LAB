@@ -125,7 +125,7 @@ static void wczytywanie_dane(char **a, int *an, int *ilosc) {
             i++;
             spacja = true;
         }
-        if ((znak == ' ' || znak == '\n' || znak == '   ') && spacja) {
+        if ((znak == ' ' || znak == '\n' || znak == '	') && spacja) {
             dane[i] = ' ';
             i++;
             spacja = false;
