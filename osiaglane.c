@@ -73,6 +73,11 @@ int main(void) {
 
     wczytywanie_dane(&pobrane_dane, &dlugosc_dane, &maks_il_wezl);
 
+    for(int i = 0; i < dlugosc_dane; i++) {
+        printf("%c", pobrane_dane[i]);
+    }
+    printf("\n");
+
     printf("dlugosc dane == %d\n", dlugosc_dane);
 
     TEdge *krawedz = malloc((size_t) maks_il_wezl * sizeof(TEdge));
@@ -90,22 +95,23 @@ int main(void) {
     while (pozycja < dlugosc_dane - 1) { printf("pozycja == %d\n", pozycja);
         int dlugosc_wyr;
         char *nowy_wyr = wczytywanie_wyrazu(pobrane_dane, dlugosc_dane, &pozycja, &dlugosc_wyr);
-        
+
         char *kopia;
         kopia = malloc((size_t) dlugosc_wyr * sizeof(char));
         for (int i = 0; i < dlugosc_wyr; i++) {
+
             kopia[i] = nowy_wyr[i];
         }
         free(nowy_wyr);
-        
-        int dlugosc;
+
+
         printf("TESTTT wyraz\n");
-        
+
         for (int i = 0; i< dlugosc_wyr; i++) {
         printf("%c", kopia[i]);
         }
         printf("\n");
-        
+
         if (i == 0) { printf("pierwszy\n");
         printf("stawiam do komorki %d\n", i);
             wezly[i] = kopia;
@@ -129,7 +135,7 @@ int main(void) {
                 if (czy_to_samo(kopia, start)) index_start = i;
                 i++;
             }
-            else { 
+            else {
             printf("taka sama, zwalniam kopie\n");
                 free(kopia);
             }
@@ -145,7 +151,7 @@ int main(void) {
              //   printf("j = %d\n", j);
             }
         }
-        
+
     }
     ilosc_wezlow = i;
  /*   for(int i = 0; i<miejsce; i++) {
@@ -198,7 +204,7 @@ void wczytywanie_dane(char **a, int *an, int *ilosc) {
             rozmiar += 100;
             dane = realloc(dane, (size_t) rozmiar * sizeof *dane);
         }
-        if (isalpha(znak) != 0) {
+        if (isalpha(znak) != 0 || isdigit(znak) != 0) {
         //if ((znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
             dane[i] = znak;
             i++;
@@ -227,7 +233,7 @@ char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc) {
     int j = 0;
     int rozmiar = 20;
     bool dane = true;
-    while (isalpha(in[i]) == 0) i++;
+    while (isalpha(in[i]) == 0 && isdigit(in[i]) == 0) i++;
     while (i < inn && in[i] != '}' && dane) {
 
             printf("pozycja i dane == %d\n", i);
@@ -237,7 +243,7 @@ char* wczytywanie_wyrazu(char *in, int inn, int *liczba, int *dlugosc) {
             wyraz = realloc(wyraz, (size_t) rozmiar * sizeof (char));
         }
         //if ((znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
-        if (isalpha(in[i]) != 0) {
+        if (isalpha(in[i]) != 0 || isdigit(in[i]) != 0) {
             wyraz[j] = in[i];
             j++;
             i++;
